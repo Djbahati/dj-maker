@@ -1,0 +1,80 @@
+app = Flask(__)
+# Define user roles
+USER_ROLES = {
+    "+250780455033": "admin",  # Admin phone number
+    "+250780455033": "user"    # Regular user phone number
+}
+@app.route('/sms', methods=['POST'])
+def sms_reply():
+    from_number = request.form.get('From')
+    body = request.form.get('Body').strip().lower()
+
+    # Get user role
+    role = USER_ROLES.get(from_number, "unknown")africakv'/flkma
+
+    response = MessagingResponse()
+
+    if role == "admin":
+        response.message(f"Admin received: {body}")
+    elif role == "user":
+        response.message(f"User received: {body}")
+    else:
+        response.message("Unknown sender. Your message could not be processed.")
+
+    return str(response)
+
+if _name_ == "_main_":
+    app.run(port=5000)
+import imaplib
+import email
+from email.header import decode_header
+
+# Email account credentials
+username = "your_email@example.com"
+password = "your_password"
+
+# Define user roles
+USER_ROLES = {
+    "admin@example.com": "admin",
+    "user@example.com": "user"
+}
+
+def fetch_emails():
+    # Connect to the IMAP server
+    mail = imaplib.IMAP4_SSL("imap.example.com")
+    mail.login(username, password)
+    mail.select("inbox")
+
+    # Search for all emails
+    status, messages = mail.search(None, "ALL")
+    email_ids = messages[0].split()
+
+    for email_id in email_ids:
+        status, msg_data = mail.fetch(email_id, "(RFC822)")
+        msg = email.message_from_bytes(msg_data[0][1])
+
+        # Decode email subject
+        subject, encoding = decode_header(msg["Subject"])[0]
+        if isinstance(subject, bytes):
+            subject = subject.decode(encoding if encoding else "utf-8")
+
+        from_email = msg.get("From")
+        role = USER_ROLES.get(from_email, "unknown")
+
+        print(f"Subject: {subject}")
+        print(f"From: {from_email}")
+        print(f"Role: {role}")
+
+        # Handle messages based on role
+        if role == "admin":
+            print("Handling admin-specific actions.")
+        elif role == "user":
+            print("Handling user-specific actions.")
+        else:
+            print("Handling unknown role actions.")
+
+    # Logout and close connection
+    mail.logout()
+
+if _name_ == "_main_":
+    fetch_emails(app)
